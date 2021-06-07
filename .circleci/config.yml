@@ -5,25 +5,15 @@ jobs:
       - image: circleci/node:8.10
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v1-dependencies-
-            - v1-dependencies-
-
       - run:
           name: Install Serverless CLI and dependencies
           command: |
             sudo npm i -g serverless
             npm install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-
-
       - run:
           name: Run tests with coverage
-          command: npm test --coverage
+          command: npm test
 
       - run:
           name: Deploy application
-          command: sls deploy --stage pre
+          command: sls deploy --stage dev
