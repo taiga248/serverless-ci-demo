@@ -3,6 +3,22 @@ executors:
   node:
     docker:
       - image: circleci/node:10.15.3
+        environment:
+          AWS_DEFAULT_REGION: ap-northeast-1
+
+references:
+  install_serverless: &install_serverless
+    run:
+      name: Install serverless command
+      command: |
+        sudo apt-get update
+        sudo apt-get install gcc g++ make
+        curl -sL https://deb.nodesource.com/setup_12.x | sudo bash -
+        sudo apt-get install -y nodejs
+        mkdir ~/.npm-global
+        npm config set prefix '~/.npm-global'
+        echo ' export PATH=~/.npm-global/bin:$PATH' >> $BASH_ENV
+        npm install -g serverless
 jobs:
   build:
     executor: node
@@ -11,15 +27,23 @@ jobs:
       - run:
           name: package install
           command: npm install
+      - *install_serverless
       - run:
           name: Echo
           command: echo "CI is fire."
       - run:
           name: Test
           command: npm run test
+      - run:
+          name: Deploy
+          command: serverless deploy
 
 workflows:
   version: 2
   sample:
     jobs:
-      - build
+      - build:
+        filters:
+          branches:
+            only:
+              - master
