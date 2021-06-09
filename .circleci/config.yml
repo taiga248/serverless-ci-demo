@@ -1,19 +1,25 @@
-version: 2
+version: 2.1
+executors:
+  node:
+    docker:
+      - image: circleci/node:10.15.3
 jobs:
   build:
-    docker:
-      - image: circleci/node:8.10
+    executor: node
     steps:
       - checkout
       - run:
-          name: Install Serverless CLI and dependencies
-          command: |
-            sudo npm i -g serverless
-            npm install
+          name: package install
+          command: npm install
       - run:
-          name: Run tests with coverage
-          command: npm test
+          name: Echo
+          command: echo "CI is fire."
+      - run:
+          name: Test
+          command: npm run test
 
-      - run:
-          name: Deploy application
-          command: sls deploy --stage dev
+workflows:
+  version: 2
+  sample:
+    jobs:
+      - build
