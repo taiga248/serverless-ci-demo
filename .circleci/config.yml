@@ -19,31 +19,30 @@ references:
         npm config set prefix '~/.npm-global'
         echo ' export PATH=~/.npm-global/bin:$PATH' >> $BASH_ENV
         npm install -g serverless
+
 jobs:
   build:
     executor: node
     steps:
       - checkout
+      - *install_serverless
       - run:
           name: package install
           command: npm install
-      - *install_serverless
       - run:
-          name: Echo
-          command: echo "CI is fire."
+          name: Set credentials config
+          command: sls config credentials --provider aws --key $AWS_ACCESS_KEY --secret $AWS_SECRET_ACCESS_KEY
       - run:
           name: Test
           command: npm run test
       - run:
           name: Deploy
-          command: serverless deploy
+          command: sls deploy
 
 workflows:
   version: 2
   sample:
     jobs:
       - build:
-        filters:
-          branches:
-            only:
-              - master
+          context:
+            - saas_aws
