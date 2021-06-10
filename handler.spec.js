@@ -8,7 +8,7 @@ describe("The handler function", () => {
   it("return a message", () => {
     handler.hello(undefined, undefined, function (error, response) {
       let body = JSON.parse(response.body);
-      body.message.should.be.equal("こんにちは");
+      body.message.should.be.equal("Good");
     });
   });
 });
